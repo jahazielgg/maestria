@@ -1,8 +1,8 @@
-import { Box, Typography, Grid, Fade, IconButton, Chip, Card, CardContent, Checkbox, FormControlLabel } from '@mui/material'
+import { Box, Typography, Grid, Fade, IconButton, Chip } from '@mui/material'
 import { useDidacticUnitStore } from '../../../store/useDidacticUnitStore'
 import { useState } from 'react';
 import { competenciesByCycle, type Competency } from '../../../store/entities/CurriculumMap';
-import { CheckCircle as CheckIcon, Edit as EditIcon, ExpandMore as ExpandIcon } from "@mui/icons-material";
+import { CheckCircle as CheckIcon, Edit as EditIcon } from "@mui/icons-material";
 import CompetencyCard, { COMPETENCY_COLORS, type SelectedCompetency } from '../components/CompetencyCard';
 
 export default function Step3Competencies() {
