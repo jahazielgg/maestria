@@ -24,7 +24,7 @@ export type CurricularArea = string
 
 export type Competency = {
   name: string
-  area: CurricularArea
+  area: CurricularArea,
   abilities: string[]
 }
 
@@ -54,11 +54,29 @@ export const cyclesToAreas: Record<Cycle, CurricularArea[]> = {
   'Ciclo VII': ['Comunicación', 'Castellano como Segunda Lengua', 'Inglés', 'Arte y Cultura', 'Desarrollo Personal, Ciudadanía y Cívica', 'Ciencias Sociales', 'Educación Religiosa', 'Educación Física', 'Matemática', 'Ciencia y Tecnología', 'Educación para el Trabajo'],
 }
 
+export const abilitiesByCompetency: Record<string, string[]> = {
+  'Construye su identidad': [
+    "Se valora a sí mismo",
+    "Autorregula sus emociones",
+    "Reflexiona y argumenta éticamente",
+    "Vive su sexualidad de manera plena y responsable"
+  ],
+  'Convive y participa democráticamente en la búsqueda del bien común': [
+    "Interactúa con todas las personas",
+    "Construye y asume acuerdos y normas",
+    "Maneja conflictos de manera constructiva",
+    "Delibera sobre asuntos públicos",
+    "Participa en acciones que promueven el bienestar común"
+  ],
+}
+
+
 export const competenciesByCycle: Record<Cycle, Competency[]> = {
   'Ciclo I': [
     {
       name: 'Construye su identidad', area: 'Personal Social',
-      abilities: ["Se valora a sí mismo",
+      abilities: [
+        "Se valora a sí mismo",
         "Autorregula sus emociones",
         "Reflexiona y argumenta éticamente",
         "Vive su sexualidad de manera plena y responsable"]
@@ -71,7 +89,7 @@ export const competenciesByCycle: Record<Cycle, Competency[]> = {
         "Maneja conflictos de manera constructiva",
         "Delibera sobre asuntos públicos",
         "Participa en acciones que promueven el bienestar común"]
-    }, //id: 16
+    }, //asi para todos los ciclos...
     {
       name: 'Se desenvuelve de manera autónoma a través de su motricidad',
       area: 'Psicomotriz',

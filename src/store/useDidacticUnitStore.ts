@@ -5,11 +5,14 @@ import { create } from "zustand";
 export type DidacticUnitType = 'learningUnit' | 'learningProject' | 'learningModule'
 export type Modality = 'inPerson' | 'virtual' | 'hybrid'
 
-export const useDidacticUnitStore = create<DidacticUnitStore>((set) =>({
+export const useDidacticUnitStore = create<DidacticUnitStore>((set) => ({
     currentStep: 0,
     unitType: null,
     generalData: null,
     selectedCurricularAreas: [],
+
+    selectedCompetencies: [],
+    setSelectedCompetencies: (competencies) => set({ selectedCompetencies: competencies }),
 
     setUnitType: (type) => set({ unitType: type }),
     setGeneralData: (data) => set({ generalData: data }),
@@ -29,7 +32,7 @@ export const useDidacticUnitStore = create<DidacticUnitStore>((set) =>({
     setGrade: (grade: Grade | null) => set({ grade }),
 
 
-    reset: () => 
+    reset: () =>
         set({
             currentStep: 0,
             unitType: null,
