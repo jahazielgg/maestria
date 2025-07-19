@@ -1,26 +1,41 @@
 import { Box, Button, Step, StepLabel, Stepper } from "@mui/material";
 import { useDidacticUnitStore } from "../../../store/useDidacticUnitStore";
-import Step1UnitType from "../steps/Step1LevelCycleGrade";
-import Step2GeneralData from "../steps/Step2CurricularAreas";
 import Step3CurricularAreas from "../steps/Step3Competencies";
+import Step1LevelCycleGrade from "../steps/Step1LevelCycleGrade";
+import Step2CurricularAreas from "../steps/Step2CurricularAreas";
+import Step4TransversalApproaches from "../steps/Step4TransversalApproach";
+import Step5SignificantSituation from "../steps/Step5SignificantSituation";
+import Step6DidacticUnitDetails from "../steps/Step6DidacticUnitDetails";
 
-const steps = ['Unidad Didáctica', 'Información General',
-    'Áreas Curriculares'];
-
-
+const steps = ['Nivel', 'Áreas Curriculares', 'Competencias', 'Enfoques Transversales', 'Situación Significativa', 'Detalles de la Unidad Didáctica'];
 
 
 export default function DidacticUnitWizard() {
-    const { currentStep, nextStep, prevStep, unitType, generalData, selectedCurricularAreas } = useDidacticUnitStore();
+    const { 
+        currentStep, 
+        nextStep,
+        prevStep, 
+        unitType, 
+        selectedCurricularAreas,
+        generalData,
+        
+
+    } = useDidacticUnitStore();
 
     const renderStep = () => {
         switch (currentStep) {
             case 0:
-                return <Step1UnitType />;
+                return <Step1LevelCycleGrade />;
             case 1:
-                return <Step2GeneralData />;
+                return <Step2CurricularAreas />;
             case 2:
                 return <Step3CurricularAreas />;
+            case 3:
+                return <Step4TransversalApproaches />;
+            case 4:
+                return <Step5SignificantSituation />;
+            case 4:
+                return <Step6DidacticUnitDetails />;
             default:
                 return null;
         }
