@@ -1,8 +1,8 @@
 import { Box, Button, Step, StepLabel, Stepper } from "@mui/material";
 import { useDidacticUnitStore } from "../../../store/useDidacticUnitStore";
 import Step1UnitType from "../steps/Step1LevelCycleGrade";
-import Step2GeneralData from "../steps/Step2GeneralData";
-import Step3CurricularAreas from "../steps/Step3CurricularAreas";
+import Step2GeneralData from "../steps/Step2CurricularAreas";
+import Step3CurricularAreas from "../steps/Step3Competencies";
 
 const steps = ['Unidad Didáctica', 'Información General',
     'Áreas Curriculares'];
