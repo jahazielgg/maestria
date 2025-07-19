@@ -1,6 +1,7 @@
 import type { SelectedCompetency } from "../../modules/didacticUnit/components/CompetencyCard";
 import type { DidacticUnitType } from "../useDidacticUnitStore";
 import type { Competency, Cycle, EducationLevel, Grade } from "./CurriculumMap";
+import type { DidacticUnitDetails } from "./DidacticUnitDetails";
 import type { GeneralData } from "./GeneralData";
 
 export interface DidacticUnitStore {
@@ -18,6 +19,15 @@ export interface DidacticUnitStore {
 
     selectedCompetencies: SelectedCompetency[],
     setSelectedCompetencies: (competencies: SelectedCompetency[]) => void,
+
+    selectedTransversalApproaches: string[],
+    setSelectedTransversalApproaches: (approaches: string[]) => void,
+
+    significantSituation: string,
+    setSignificantSituation: (situation: string) => void,
+
+    didacticUnitDetails: DidacticUnitDetails | null,
+    setDidacticUnitDetails: (details: DidacticUnitDetails) => void,
 
     unitType: DidacticUnitType | null
     generalData: GeneralData | null

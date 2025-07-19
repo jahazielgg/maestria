@@ -14,6 +14,15 @@ export const useDidacticUnitStore = create<DidacticUnitStore>((set) => ({
     selectedCompetencies: [],
     setSelectedCompetencies: (competencies) => set({ selectedCompetencies: competencies }),
 
+    selectedTransversalApproaches: [],
+    setSelectedTransversalApproaches: (approaches) => set({ selectedTransversalApproaches: approaches }),
+
+    significantSituation: '',
+    setSignificantSituation: (situation) => set({ significantSituation: situation }),
+
+    didacticUnitDetails: null,
+    setDidacticUnitDetails: (details) => set({ didacticUnitDetails: details }),
+
     setUnitType: (type) => set({ unitType: type }),
     setGeneralData: (data) => set({ generalData: data }),
 
@@ -41,5 +50,7 @@ export const useDidacticUnitStore = create<DidacticUnitStore>((set) => ({
             educationLevel: null,
             cycle: null,
             grade: null,
+            selectedCompetencies: [],
+            selectedTransversalApproaches: []
         })
 }))
