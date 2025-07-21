@@ -1,8 +1,8 @@
-import { 
-    Box, 
-    Typography, 
-    Card, 
-    CardContent, 
+import {
+    Box,
+    Typography,
+    Card,
+    CardContent,
     Grid,
     FormControl,
     InputLabel,
@@ -15,7 +15,7 @@ import {
     Chip,
     Paper
 } from '@mui/material'
-import { 
+import {
     School as SchoolIcon,
     Assignment as AssignmentIcon,
     Build as BuildIcon,
@@ -30,6 +30,7 @@ import {
 import { useDidacticUnitStore } from '../../../store/useDidacticUnitStore';
 import { useState, useEffect } from 'react';
 import type { DidacticUnitType, DurationType, DidacticUnitDetails, LearningProjectDetails, LearningModuleDetails } from '../../../store/entities/DidacticUnitDetails';
+import type { CurricularArea } from '../../../store/entities/CurriculumMap';
 
 const UNIT_TYPE_INFO = {
     unidadAprendizaje: {
@@ -40,7 +41,7 @@ const UNIT_TYPE_INFO = {
         recommendedDuration: { min: 3, max: 8, type: "semanas" as DurationType }
     },
     proyectoAprendizaje: {
-        title: "Proyecto de Aprendizaje", 
+        title: "Proyecto de Aprendizaje",
         description: "Secuencia más centrada en resolución de problemas reales, co-construida con estudiantes, con un producto final significativo.",
         icon: BuildIcon,
         color: "#4CAF50",
@@ -49,20 +50,20 @@ const UNIT_TYPE_INFO = {
     moduloAprendizaje: {
         title: "Módulo de Aprendizaje",
         description: "Secuencia breve, enfocada en contenido específico, puede servir como pre-requisito o intervención puntual dentro de una unidad o proyecto.",
-        icon: AssignmentIcon,  
+        icon: AssignmentIcon,
         color: "#FF9800",
         recommendedDuration: { min: 2, max: 6, type: "sesiones" as DurationType }
     }
 };
 
 export default function Step6DidacticUnitDetails() {
-    const { didacticUnitDetails, setDidacticUnitDetails } = useDidacticUnitStore();
+    const { didacticUnitDetails, setDidacticUnitDetails, selectedCurricularAreas } = useDidacticUnitStore();
     const [selectedType, setSelectedType] = useState<DidacticUnitType>('unidadAprendizaje');
     const [formData, setFormData] = useState({
         title: '',
         duration: 1,
         durationType: 'semanas' as DurationType,
-        purpose: '',
+        purposeByArea: {} as Record<CurricularArea, string>,
         finalProduct: '',
         expectedLearnings: 1,
         // Campos específicos
@@ -78,7 +79,7 @@ export default function Step6DidacticUnitDetails() {
                 title: didacticUnitDetails.title,
                 duration: didacticUnitDetails.duration,
                 durationType: didacticUnitDetails.durationType,
-                purpose: didacticUnitDetails.purpose,
+                purposeByArea: didacticUnitDetails.purposeByArea,
                 finalProduct: didacticUnitDetails.finalProduct,
                 expectedLearnings: didacticUnitDetails.expectedLearnings,
                 centralProblem: (didacticUnitDetails as LearningProjectDetails).centralProblem || '',
@@ -100,14 +101,14 @@ export default function Step6DidacticUnitDetails() {
 
     const handleFieldChange = (field: string, value: any) => {
         setFormData(prev => ({ ...prev, [field]: value }));
-        
+
         // Actualizar el store
         const updatedDetails: DidacticUnitDetails = {
             type: selectedType,
             title: field === 'title' ? value : formData.title,
             duration: field === 'duration' ? value : formData.duration,
             durationType: field === 'durationType' ? value : formData.durationType,
-            purpose: field === 'purpose' ? value : formData.purpose,
+            purposeByArea: field === 'purposeByArea' ? value : formData.purposeByArea,
             finalProduct: field === 'finalProduct' ? value : formData.finalProduct,
             expectedLearnings: field === 'expectedLearnings' ? value : formData.expectedLearnings,
             ...(selectedType === 'proyectoAprendizaje' && {
@@ -122,13 +123,39 @@ export default function Step6DidacticUnitDetails() {
         setDidacticUnitDetails(updatedDetails);
     };
 
+    const handlePurposeChange = (area: CurricularArea, value: string) => {
+        const updatedPurposes = {
+            ...formData.purposeByArea,
+            [area]: value
+        };
+
+        setFormData(prev => ({
+            ...prev,
+            purposeByArea: updatedPurposes
+        }));
+
+        setDidacticUnitDetails({
+            ...formData,
+            type: selectedType,
+            purposeByArea: updatedPurposes,
+            ...(selectedType === 'proyectoAprendizaje' && {
+                centralProblem: formData.centralProblem
+            }),
+            ...(selectedType === 'moduloAprendizaje' && {
+                baseUnit: formData.baseUnit,
+                pedagogicalJustification: formData.pedagogicalJustification
+            })
+        });
+    };
+
+
     const currentTypeInfo = UNIT_TYPE_INFO[selectedType];
     const IconComponent = currentTypeInfo.icon;
 
     return (
         <Box>
             <Typography variant="h4" gutterBottom sx={{ fontWeight: 600, color: 'primary.main' }}>
-                Paso 6: Estructura de la Unidad Didáctica
+                Estructura de la Unidad Didáctica
             </Typography>
 
             {/* Selector de tipo de unidad */}
@@ -136,12 +163,12 @@ export default function Step6DidacticUnitDetails() {
                 <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
                     Selecciona el tipo de unidad didáctica
                 </Typography>
-                
+
                 <Grid container spacing={2}>
                     {Object.entries(UNIT_TYPE_INFO).map(([type, info]) => {
                         const TypeIcon = info.icon;
                         const isSelected = selectedType === type;
-                        
+
                         return (
                             <Grid size={{ xs: 12, md: 4 }} key={type}>
                                 <Card
@@ -236,19 +263,27 @@ export default function Step6DidacticUnitDetails() {
 
                     {/* Propósito */}
                     <Grid size={{ xs: 12 }}>
-                        <TextField
-                            fullWidth
-                            multiline
-                            rows={3}
-                            label="Propósito de la unidad"
-                            value={formData.purpose}
-                            onChange={(e) => handleFieldChange('purpose', e.target.value)}
-                            placeholder="Describe el propósito formativo de esta unidad didáctica..."
-                            InputProps={{
-                                startAdornment: <PsychologyIcon sx={{ color: 'text.secondary', mr: 1, mt: 1 }} />
-                            }}
-                        />
+                        <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 1 }}>
+                            Propósito de la unidad por área curricular
+                        </Typography>
+                        {selectedCurricularAreas.map((area) => (
+                            <Box key={area} sx={{ mb: 3 }}>
+                                <TextField
+                                    fullWidth
+                                    multiline
+                                    rows={3}
+                                    label={`Propósito para el área de ${area}`}
+                                    value={formData.purposeByArea[area] || ''}
+                                    onChange={(e) => handlePurposeChange(area, e.target.value)}
+                                    placeholder="Describe el propósito pedagógico para esta área..."
+                                    InputProps={{
+                                        startAdornment: <PsychologyIcon sx={{ color: 'text.secondary', mr: 1, mt: 1 }} />
+                                    }}
+                                />
+                            </Box>
+                        ))}
                     </Grid>
+
 
                     {/* Producto final */}
                     <Grid size={{ xs: 12 }}>
@@ -351,14 +386,14 @@ export default function Step6DidacticUnitDetails() {
                 </Alert>
             )}
 
-            {!formData.purpose && (
+            {!formData.purposeByArea && (
                 <Alert severity="info" sx={{ mb: 2 }}>
                     <AlertTitle>Define el propósito</AlertTitle>
                     El propósito orienta toda la secuencia de aprendizaje.
                 </Alert>
             )}
 
-            {formData.title && formData.purpose && (
+            {formData.title && formData.purposeByArea && (
                 <Alert severity="success">
                     <AlertTitle>¡Excelente configuración!</AlertTitle>
                     Has definido los elementos básicos para tu {currentTypeInfo.title.toLowerCase()}.

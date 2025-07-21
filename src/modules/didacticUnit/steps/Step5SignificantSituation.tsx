@@ -82,7 +82,7 @@ export default function Step5SignificantSituation() {
     return (
         <Box>
             <Typography variant="h4" gutterBottom sx={{ fontWeight: 600, color: 'primary.main' }}>
-                Paso 5: Situación Significativa
+                Situación Significativa
             </Typography>
             
             <Alert 

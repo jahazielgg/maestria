@@ -24,7 +24,7 @@ export default function Step4TransversalApproaches() {
     return (
         <Box>
             <Typography variant="h4" gutterBottom sx={{ fontWeight: 600, color: 'primary.main' }}>
-                Paso 4: Enfoques Transversales
+               Enfoques Transversales
             </Typography>
             
             <Alert 

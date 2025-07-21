@@ -60,6 +60,9 @@ export default function Step1LevelCycleGrade() {
 
     return (
         <Box className="px-6 py-10 max-w-5xl mx-auto space-y-8">
+            <Typography variant="h4" gutterBottom sx={{ fontWeight: 600, color: 'primary.main' }}>
+                Nivel Educativo, Ciclo y Grado
+            </Typography>            
             {/* Nivel Educativo - Vista Expandida o Compacta */}
             <Box
                 sx={{
