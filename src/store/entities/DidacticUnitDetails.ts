@@ -1,3 +1,5 @@
+import type { CurricularArea } from "./CurriculumMap";
+
 export type DidacticUnitType = 'unidadAprendizaje' | 'proyectoAprendizaje' | 'moduloAprendizaje';
 export type DurationType = 'semanas' | 'sesiones';
 
@@ -6,7 +8,7 @@ export interface BaseDidacticUnitDetails {
     title: string;
     duration: number;
     durationType: DurationType;
-    purpose: string;
+    purposeByArea: Record<CurricularArea, string>;
     finalProduct: string;
     expectedLearnings: number;
 }
