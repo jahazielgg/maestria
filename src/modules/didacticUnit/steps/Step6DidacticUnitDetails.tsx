@@ -29,7 +29,7 @@ import {
 } from '@mui/icons-material';
 import { useDidacticUnitStore } from '../../../store/useDidacticUnitStore';
 import { useState, useEffect } from 'react';
-import type { DidacticUnitType, DurationType, DidacticUnitDetails, LearningProjectDetails, LearningModuleDetails } from '../../../store/entities/DidacticUnitDetails';
+import type { DidacticUnitType, DidacticUnitDetails, LearningProjectDetails, LearningModuleDetails } from '../../../store/entities/DidacticUnitDetails';
 import type { CurricularArea } from '../../../store/entities/CurriculumMap';
 
 const UNIT_TYPE_INFO = {
@@ -38,21 +38,21 @@ const UNIT_TYPE_INFO = {
         description: "Secuencia de actividades organizada alrededor de un tema, con múltiples sesiones, integración de áreas y con propósito, productos intermedios y evaluaciones formativas.",
         icon: SchoolIcon,
         color: "#2196F3",
-        recommendedDuration: { min: 3, max: 8, type: "semanas" as DurationType }
+        recommendedDuration: { min: 3, max: 8, type: "semanas" }
     },
     proyectoAprendizaje: {
         title: "Proyecto de Aprendizaje",
         description: "Secuencia más centrada en resolución de problemas reales, co-construida con estudiantes, con un producto final significativo.",
         icon: BuildIcon,
         color: "#4CAF50",
-        recommendedDuration: { min: 4, max: 12, type: "semanas" as DurationType }
+        recommendedDuration: { min: 4, max: 12, type: "semanas" }
     },
     moduloAprendizaje: {
         title: "Módulo de Aprendizaje",
         description: "Secuencia breve, enfocada en contenido específico, puede servir como pre-requisito o intervención puntual dentro de una unidad o proyecto.",
         icon: AssignmentIcon,
         color: "#FF9800",
-        recommendedDuration: { min: 2, max: 6, type: "sesiones" as DurationType }
+        recommendedDuration: { min: 2, max: 6, type: "sesiones" }
     }
 };
 
@@ -61,11 +61,11 @@ export default function Step6DidacticUnitDetails() {
     const [selectedType, setSelectedType] = useState<DidacticUnitType>('unidadAprendizaje');
     const [formData, setFormData] = useState({
         title: '',
-        duration: 1,
-        durationType: 'semanas' as DurationType,
+        startDate: '',
+        endDate: '',
         purposeByArea: {} as Record<CurricularArea, string>,
         finalProduct: '',
-        expectedLearnings: 1,
+        numberOfSessions: 1,
         // Campos específicos
         centralProblem: '', // Para proyecto
         baseUnit: '', // Para módulo
@@ -77,11 +77,11 @@ export default function Step6DidacticUnitDetails() {
             setSelectedType(didacticUnitDetails.type);
             setFormData({
                 title: didacticUnitDetails.title,
-                duration: didacticUnitDetails.duration,
-                durationType: didacticUnitDetails.durationType,
+                startDate: didacticUnitDetails.startDate,
+                endDate: didacticUnitDetails.endDate,
                 purposeByArea: didacticUnitDetails.purposeByArea,
                 finalProduct: didacticUnitDetails.finalProduct,
-                expectedLearnings: didacticUnitDetails.expectedLearnings,
+                numberOfSessions: didacticUnitDetails.numberOfSessions,
                 centralProblem: (didacticUnitDetails as LearningProjectDetails).centralProblem || '',
                 baseUnit: (didacticUnitDetails as LearningModuleDetails).baseUnit || '',
                 pedagogicalJustification: (didacticUnitDetails as LearningModuleDetails).pedagogicalJustification || ''
@@ -91,12 +91,6 @@ export default function Step6DidacticUnitDetails() {
 
     const handleTypeChange = (type: DidacticUnitType) => {
         setSelectedType(type);
-        const recommended = UNIT_TYPE_INFO[type].recommendedDuration;
-        setFormData(prev => ({
-            ...prev,
-            duration: recommended.min,
-            durationType: recommended.type
-        }));
     };
 
     const handleFieldChange = (field: string, value: any) => {
@@ -106,11 +100,11 @@ export default function Step6DidacticUnitDetails() {
         const updatedDetails: DidacticUnitDetails = {
             type: selectedType,
             title: field === 'title' ? value : formData.title,
-            duration: field === 'duration' ? value : formData.duration,
-            durationType: field === 'durationType' ? value : formData.durationType,
+            startDate: field === 'startDate' ? value : formData.startDate,
+            endDate: field === 'endDate' ? value : formData.endDate,
             purposeByArea: field === 'purposeByArea' ? value : formData.purposeByArea,
             finalProduct: field === 'finalProduct' ? value : formData.finalProduct,
-            expectedLearnings: field === 'expectedLearnings' ? value : formData.expectedLearnings,
+            numberOfSessions: field === 'numberOfSessions' ? value : formData.numberOfSessions,
             ...(selectedType === 'proyectoAprendizaje' && {
                 centralProblem: field === 'centralProblem' ? value : formData.centralProblem
             }),
@@ -231,16 +225,15 @@ export default function Step6DidacticUnitDetails() {
                             }}
                         />
                     </Grid>
-
-                    {/* Duración */}
+                    {/* Fechas de la Unidad */}
                     <Grid size={{ xs: 12, sm: 6 }}>
                         <TextField
                             fullWidth
-                            type="number"
-                            label="Duración"
-                            value={formData.duration}
-                            onChange={(e) => handleFieldChange('duration', parseInt(e.target.value) || 1)}
-                            inputProps={{ min: 1 }}
+                            type="date"
+                            label="Fecha de inicio"
+                            value={formData.startDate}
+                            onChange={(e) => handleFieldChange('startDate', e.target.value)}
+                            InputLabelProps={{ shrink: true }}
                             InputProps={{
                                 startAdornment: <TimelineIcon sx={{ color: 'text.secondary', mr: 1 }} />
                             }}
@@ -248,18 +241,38 @@ export default function Step6DidacticUnitDetails() {
                     </Grid>
 
                     <Grid size={{ xs: 12, sm: 6 }}>
-                        <FormControl fullWidth>
-                            <InputLabel>Tipo de duración</InputLabel>
-                            <Select
-                                value={formData.durationType}
-                                label="Tipo de duración"
-                                onChange={(e) => handleFieldChange('durationType', e.target.value)}
-                            >
-                                <MenuItem value="semanas">Semanas</MenuItem>
-                                <MenuItem value="sesiones">Sesiones</MenuItem>
-                            </Select>
-                        </FormControl>
+                        <TextField
+                            fullWidth
+                            type="date"
+                            label="Fecha de fin"
+                            value={formData.endDate}
+                            onChange={(e) => handleFieldChange('endDate', e.target.value)}
+                            InputLabelProps={{ shrink: true }}
+                            InputProps={{
+                                startAdornment: <TimelineIcon sx={{ color: 'text.secondary', mr: 1 }} />
+                            }}
+                        />
                     </Grid>
+
+                    {/* Validación de rango de fechas */}
+                    {formData.startDate && formData.endDate && (() => {
+                        const startDate = new Date(formData.startDate);
+                        const endDate = new Date(formData.endDate);
+                        const diffInDays = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+                        const maxDays = 4 * 7; // 4 semanas
+
+                        if (diffInDays > maxDays) {
+                            return (
+                                <Grid size={{ xs: 12 }}>
+                                    <Alert severity="warning" sx={{ mt: 2 }}>
+                                        <AlertTitle>Rango de fechas excedido</AlertTitle>
+                                        La diferencia entre la fecha de inicio y la fecha de fin no debe superar las 4 semanas.
+                                    </Alert>
+                                </Grid>
+                            );
+                        }
+                        return null;
+                    })()}
 
                     {/* Propósito */}
                     <Grid size={{ xs: 12 }}>
@@ -301,16 +314,16 @@ export default function Step6DidacticUnitDetails() {
                         />
                     </Grid>
 
-                    {/* Número de aprendizajes esperados */}
+                    {/* Número de sesiones */}
                     <Grid size={{ xs: 12, sm: 6 }}>
                         <TextField
                             fullWidth
                             type="number"
-                            label="Número de aprendizajes esperados"
-                            value={formData.expectedLearnings}
-                            onChange={(e) => handleFieldChange('expectedLearnings', parseInt(e.target.value) || 1)}
+                            label="Número de sesiones"
+                            value={formData.numberOfSessions}
+                            onChange={(e) => handleFieldChange('numberOfSessions', parseInt(e.target.value) || 1)}
                             inputProps={{ min: 1, max: 20 }}
-                            helperText="¿Cuántos logros de aprendizaje planeas?"
+                            helperText="¿Cuántas sesiones planeas?"
                             InputProps={{
                                 startAdornment: <NumbersIcon sx={{ color: 'text.secondary', mr: 1 }} />
                             }}

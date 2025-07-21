@@ -6,11 +6,11 @@ export type DurationType = 'semanas' | 'sesiones';
 export interface BaseDidacticUnitDetails {
     type: DidacticUnitType;
     title: string;
-    duration: number;
-    durationType: DurationType;
+    startDate: string; // YYYY-MM-DD
+    endDate: string; // YYYY-MM-DD
     purposeByArea: Record<CurricularArea, string>;
     finalProduct: string;
-    expectedLearnings: number;
+    numberOfSessions: number;
 }
 
 export interface LearningUnitDetails extends BaseDidacticUnitDetails {

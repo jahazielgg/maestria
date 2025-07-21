@@ -17,6 +17,10 @@ export const useDidacticUnitStore = create<DidacticUnitStore>((set) => ({
     selectedTransversalApproaches: [],
     setSelectedTransversalApproaches: (approaches) => set({ selectedTransversalApproaches: approaches }),
 
+
+    selectedTransversalCompetencies: [],
+    setSelectedTransversalCompetencies: (transversalCompetencies) => set({ selectedTransversalCompetencies: transversalCompetencies }),
+
     significantSituation: '',
     setSignificantSituation: (situation) => set({ significantSituation: situation }),
 
@@ -51,6 +55,7 @@ export const useDidacticUnitStore = create<DidacticUnitStore>((set) => ({
             cycle: null,
             grade: null,
             selectedCompetencies: [],
-            selectedTransversalApproaches: []
+            selectedTransversalApproaches: [],
+            selectedTransversalCompetencies: []
         })
 }))

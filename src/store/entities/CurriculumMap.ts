@@ -28,6 +28,11 @@ export type Competency = {
   abilities: string[]
 }
 
+export type TransversalCompetency = {
+  name: string
+  abilities: string[]
+}
+
 export const levelsToCycles: Record<EducationLevel, Cycle[]> = {
   inicial: ['Ciclo I', 'Ciclo II'],
   primaria: ['Ciclo III', 'Ciclo IV', 'Ciclo V'],
@@ -1614,7 +1619,24 @@ export const transversalApproaches: string[] = [
   'Enfoque orientación al bien común'
 ]
 
-export const transversalCompetencies: string[] = [
-  "Se desenvuelve en entornos virtuales generados por las TIC",
-  "Gestiona su aprendizaje de manera autónoma"
+
+export const transversalCompetencies: TransversalCompetency[] = [
+  {
+    name: "Se desenvuelve en entornos virtuales generados por las TIC",
+    abilities: [
+      "Personaliza entornos virtuales",
+      "Gestiona información del entorno virtual",
+      "Interactúa en entornos virtuales",
+      "Crea objetos virtuales en diversos formatos"
+    ]
+  },
+  {
+    name: "Gestiona su aprendizaje de manera autónoma",
+    abilities: [
+      "Define metas de aprendizaje",
+      "Organiza acciones estratégicas para alcanzar sus metas de aprendizaje",
+      "Monitorea y ajusta su desempeño durante el proceso de aprendizaje"
+    ]    
+  }
+
 ]

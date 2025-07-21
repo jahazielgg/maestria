@@ -1,4 +1,5 @@
 import type { SelectedCompetency } from "../../modules/didacticUnit/components/CompetencyCard";
+import type { SelectedTransversalCompetency } from "../../modules/didacticUnit/components/TransversalCompetencyCard";
 import type { DidacticUnitType } from "../useDidacticUnitStore";
 import type { Competency, Cycle, EducationLevel, Grade } from "./CurriculumMap";
 import type { DidacticUnitDetails } from "./DidacticUnitDetails";
@@ -22,6 +23,9 @@ export interface DidacticUnitStore {
 
     selectedTransversalApproaches: string[],
     setSelectedTransversalApproaches: (approaches: string[]) => void,
+
+    selectedTransversalCompetencies: SelectedTransversalCompetency[],
+    setSelectedTransversalCompetencies: (transversalCompetencies: SelectedTransversalCompetency[]) => void,
 
     significantSituation: string,
     setSignificantSituation: (situation: string) => void,
