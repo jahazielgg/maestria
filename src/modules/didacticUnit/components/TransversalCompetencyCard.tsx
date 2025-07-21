@@ -1,42 +1,33 @@
-import { Box, Typography, Fade, Chip, Card, CardContent, Checkbox, FormControlLabel } from '@mui/material'
-import { useState } from 'react';
-import { type Competency } from '../../../store/entities/CurriculumMap';
+import { Box, Card, CardContent, Checkbox, Chip, Typography, Fade, FormControlLabel } from '@mui/material';
 import { ExpandMore as ExpandIcon } from "@mui/icons-material";
+import type { TransversalCompetency } from '../../../store/entities/CurriculumMap';
+import { useState } from 'react';
 
-
-export interface SelectedCompetency extends Competency {
+export interface SelectedTransversalCompetency extends TransversalCompetency {
     selectedAbilities: string[];
 }
 
-export const COMPETENCY_COLORS: Record<string, string> = {
-    'Comunicación': '#E74C3C',
-    'Castellano como Segunda Lengua': '#F39C12',
-    'Inglés': '#3498DB',
-    'Arte y Cultura': '#9B59B6',
-    'Personal Social': '#E67E22',
-    'Desarrollo Personal, Ciudadanía y Cívica': '#E67E22',
-    'Ciencias Sociales': '#34495E',
-    'Educación Religiosa': '#8E44AD',
-    'Educación Física': '#27AE60',
-    'Matemática': '#2980B9',
-    'Ciencia y Tecnología': '#16A085',
-    'Educación para el Trabajo': '#F1C40F',
-    'Descubrimiento del Mundo': '#95A5A6'
-};
-
-export interface CompetencyCardProps {
-    competency: Competency;
-    selectedCompetency: SelectedCompetency | undefined;
-    onCompetencyToggle: (competency: Competency) => void;
-    onAbilityToggle: (competency: Competency, ability: string) => void;
+interface TransversalCompetencyCardProps {
+    competency: TransversalCompetency;
+    selectedCompetency: SelectedTransversalCompetency | undefined;
+    onCompetencyToggle: (competency: TransversalCompetency) => void;
+    onAbilityToggle: (competency: TransversalCompetency, ability: string) => void;
     index: number;
 }
 
-export default function CompetencyCard({ competency, selectedCompetency, onCompetencyToggle, onAbilityToggle, index }: CompetencyCardProps) {
-    const [expanded, setExpanded] = useState(false);
-    const color = COMPETENCY_COLORS[competency.area] || '#95A5A6';
+const TRANSVERSAL_COLOR = '#9C27B0'; // Purple color for transversal competencies
+
+export default function TransversalCompetencyCard({ 
+    competency, 
+    selectedCompetency, 
+    onCompetencyToggle, 
+    onAbilityToggle,
+    index 
+}: TransversalCompetencyCardProps) {
     const isCompetencySelected = !!selectedCompetency;
 
+    const [expanded, setExpanded] = useState(false);
+    
     return (
         <Fade in={true} timeout={300} style={{ transitionDelay: `${index * 100}ms` }}>
             <Card
@@ -44,14 +35,14 @@ export default function CompetencyCard({ competency, selectedCompetency, onCompe
                     cursor: 'pointer',
                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     border: '2px solid',
-                    borderColor: isCompetencySelected ? color : 'divider',
-                    bgcolor: isCompetencySelected ? `${color}08` : 'background.paper',
+                    borderColor: isCompetencySelected ? TRANSVERSAL_COLOR : 'divider',
+                    bgcolor: isCompetencySelected ? `${TRANSVERSAL_COLOR}08` : 'background.paper',
                     transform: isCompetencySelected ? 'translateY(-2px)' : 'translateY(0)',
-                    boxShadow: isCompetencySelected ? `0 4px 20px ${color}30` : '0 2px 4px rgba(0,0,0,0.1)',
+                    boxShadow: isCompetencySelected ? `0 4px 20px ${TRANSVERSAL_COLOR}30` : '0 2px 4px rgba(0,0,0,0.1)',
                     '&:hover': {
                         transform: 'translateY(-4px)',
-                        boxShadow: `0 8px 25px ${color}25`,
-                        borderColor: color,
+                        boxShadow: `0 8px 25px ${TRANSVERSAL_COLOR}25`,
+                        borderColor: TRANSVERSAL_COLOR,
                     }
                 }}
             >
@@ -61,20 +52,20 @@ export default function CompetencyCard({ competency, selectedCompetency, onCompe
                             checked={isCompetencySelected}
                             onChange={() => onCompetencyToggle(competency)}
                             sx={{
-                                color: color,
+                                color: TRANSVERSAL_COLOR,
                                 '&.Mui-checked': {
-                                    color: color,
+                                    color: TRANSVERSAL_COLOR,
                                 },
                                 p: 0,
                                 mt: 0.5
                             }}
                         />
-                        {/* Competencias por Área */}
+                        {/* Competencia Transversal */}
                         <Box flex={1}>
                             <Typography
                                 variant="h6"
                                 sx={{
-                                    color: isCompetencySelected ? color : 'text.primary',
+                                    color: isCompetencySelected ? TRANSVERSAL_COLOR : 'text.primary',
                                     fontWeight: isCompetencySelected ? 600 : 500,
                                     mb: 1,
                                     lineHeight: 1.3
@@ -84,11 +75,11 @@ export default function CompetencyCard({ competency, selectedCompetency, onCompe
                             </Typography>
 
                             <Chip
-                                label={competency.area}
+                                label="Competencia Transversal"
                                 size="small"
                                 sx={{
-                                    bgcolor: `${color}15`,
-                                    color: color,
+                                    bgcolor: `${TRANSVERSAL_COLOR}15`,
+                                    color: TRANSVERSAL_COLOR,
                                     fontWeight: 500,
                                     mb: 2
                                 }}
@@ -141,9 +132,9 @@ export default function CompetencyCard({ competency, selectedCompetency, onCompe
                                                                 onChange={() => onAbilityToggle(competency, ability)}
                                                                 size="small"
                                                                 sx={{
-                                                                    color: color,
+                                                                    color: TRANSVERSAL_COLOR,
                                                                     '&.Mui-checked': {
-                                                                        color: color,
+                                                                        color: TRANSVERSAL_COLOR,
                                                                     },
                                                                     '&.Mui-disabled': {
                                                                         opacity: 0.3
@@ -195,8 +186,6 @@ export default function CompetencyCard({ competency, selectedCompetency, onCompe
                                 </Box>
                             )}
                         </Box>
-                        
-                    
                     </Box>
                 </CardContent>
             </Card>

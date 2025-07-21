@@ -1,9 +1,9 @@
-import { Box, Typography, Grid, Fade, IconButton, Chip } from '@mui/material'
+import { Box, Typography, Grid, Fade, Chip } from '@mui/material'
 import { useDidacticUnitStore } from '../../../store/useDidacticUnitStore'
-import { useState } from 'react';
-import { competenciesByCycle, type Competency } from '../../../store/entities/CurriculumMap';
-import { CheckCircle as CheckIcon, Edit as EditIcon } from "@mui/icons-material";
+import { competenciesByCycle, transversalCompetencies, type Competency, type TransversalCompetency } from '../../../store/entities/CurriculumMap';
+import { CheckCircle as CheckIcon } from "@mui/icons-material";
 import CompetencyCard, { COMPETENCY_COLORS, type SelectedCompetency } from '../components/CompetencyCard';
+import TransversalCompetencyCard, { type SelectedTransversalCompetency } from '../components/TransversalCompetencyCard';
 
 export default function Step3Competencies() {
     const {
@@ -13,6 +13,8 @@ export default function Step3Competencies() {
         selectedCurricularAreas,
         selectedCompetencies,
         setSelectedCompetencies,
+        selectedTransversalCompetencies,
+        setSelectedTransversalCompetencies,
     } = useDidacticUnitStore();
 
     // Obtener competencias disponibles basadas en el ciclo y áreas seleccionadas
@@ -58,7 +60,43 @@ export default function Step3Competencies() {
         }
     };
 
-    const canProceed = selectedCompetencies.length > 0 && selectedCompetencies.every(c => c.selectedAbilities.length > 0);
+    // Manejo de competencias transversales
+    const handleTransversalCompetencyToggle = (competency: TransversalCompetency) => {
+        const existingIndex = selectedTransversalCompetencies.findIndex(c => c.name === competency.name);
+
+        if (existingIndex >= 0) {
+            // Remover competencia transversal
+            setSelectedTransversalCompetencies(selectedTransversalCompetencies.filter((_, i) => i !== existingIndex));
+        } else {
+            // Agregar competencia transversal con todas las capacidades seleccionadas por defecto
+            const newSelectedTransversalCompetency: SelectedTransversalCompetency = {
+                ...competency,
+                selectedAbilities: [...competency.abilities] // Seleccionar todas las capacidades por defecto
+            };
+            setSelectedTransversalCompetencies([...selectedTransversalCompetencies, newSelectedTransversalCompetency]);
+        }
+    };
+
+    const handleTransversalAbilityToggle = (competency: TransversalCompetency, ability: string) => {
+        const competencyIndex = selectedTransversalCompetencies.findIndex(c => c.name === competency.name);
+
+        if (competencyIndex >= 0) {
+            const updatedCompetencies = [...selectedTransversalCompetencies];
+            const selectedCompetency = updatedCompetencies[competencyIndex];
+
+            const abilityIndex = selectedCompetency.selectedAbilities.indexOf(ability);
+
+            if (abilityIndex >= 0) {
+                // Remover capacidad
+                selectedCompetency.selectedAbilities = selectedCompetency.selectedAbilities.filter((_, i) => i !== abilityIndex);
+            } else {
+                // Agregar capacidad
+                selectedCompetency.selectedAbilities = [...selectedCompetency.selectedAbilities, ability];
+            }
+
+            setSelectedTransversalCompetencies(updatedCompetencies);
+        }
+    }
 
     // Agrupar competencias por área para mejor organización
     const competenciesByArea = availableCompetencies.reduce((acc, comp) => {
@@ -192,8 +230,46 @@ export default function Step3Competencies() {
                     </Box>
                 )}
 
+                {/* Competencias Transversales */}
+                <Box>
+                    <Typography
+                        variant="h5"
+                        sx={{
+                            color: '#9C27B0',
+                            fontWeight: 600,
+                            mb: 2,
+                            mt: 4
+                        }}
+                    >
+                        Competencias Transversales
+                    </Typography>
+
+                    <Typography variant="body2" color="text.secondary" mb={3}>
+                        Las competencias transversales son aplicables a todos los niveles y áreas curriculares.
+                        Puedes seleccionar las que sean relevantes para tu unidad didáctica.
+                    </Typography>
+
+                    <Grid container spacing={3}>
+                        {transversalCompetencies.map((competency, index) => {
+                            const selectedCompetency = selectedTransversalCompetencies.find(c => c.name === competency.name) as SelectedTransversalCompetency | undefined;
+
+                            return (
+                                <Grid size={{ xs: 12, lg: 6 }} key={competency.name}>
+                                    <TransversalCompetencyCard
+                                        competency={competency}
+                                        selectedCompetency={selectedCompetency}
+                                        onCompetencyToggle={handleTransversalCompetencyToggle}
+                                        onAbilityToggle={handleTransversalAbilityToggle}
+                                        index={index}
+                                    />
+                                </Grid>
+                            );
+                        })}
+                    </Grid>
+                </Box>
+
                 {/* Resumen de competencias seleccionadas */}
-                {selectedCompetencies.length > 0 && (
+                {(selectedCompetencies.length > 0 || selectedTransversalCompetencies.length > 0) && (
                     <Fade in={true} timeout={300}>
                         <Box
                             sx={{
@@ -206,9 +282,10 @@ export default function Step3Competencies() {
                             }}
                         >
                             <Typography variant="h6" color="success.main" mb={2}>
-                                Competencias Seleccionadas ({selectedCompetencies.length})
+                                Competencias Seleccionadas ({selectedCompetencies.length + selectedTransversalCompetencies.length})
                             </Typography>
                             <Box display="flex" flexDirection="column" gap={2}>
+                                {/* Competencias por área */}
                                 {selectedCompetencies.map((competency) => {
                                     const color = COMPETENCY_COLORS[competency.area] || '#95A5A6';
                                     return (
@@ -243,6 +320,57 @@ export default function Step3Competencies() {
                                                 </Typography>
                                                 <Box component="ul" sx={{ pl: 2, m: 0 }}>
                                                     {competency.selectedAbilities.map((ability, i) => (
+                                                        <Typography
+                                                            key={i}
+                                                            component="li"
+                                                            variant="caption"
+                                                            color="text.secondary"
+                                                            sx={{ mb: 0.25, lineHeight: 1.3 }}
+                                                        >
+                                                            {ability}
+                                                        </Typography>
+                                                    ))}
+                                                </Box>
+                                            </Box>
+                                        </Box>
+                                    );
+                                })}
+
+                                {/* Competencias transversales */}
+                                {selectedTransversalCompetencies.map((competency: SelectedTransversalCompetency) => {
+                                    const color = '#9C27B0';
+                                    return (
+                                        <Box key={competency.name} sx={{ p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1, bgcolor: 'white' }}>
+                                            <Typography variant="subtitle2" sx={{ color, fontWeight: 600, mb: 0.5 }}>
+                                                {competency.name}
+                                            </Typography>
+                                            <Box display="flex" gap={1} mb={1} flexWrap="wrap">
+                                                <Chip
+                                                    label="Competencia Transversal"
+                                                    size="small"
+                                                    sx={{
+                                                        bgcolor: `${color}15`,
+                                                        color: color,
+                                                        fontWeight: 500
+                                                    }}
+                                                />
+                                                <Chip
+                                                    label={`${competency.selectedAbilities.length} capacidad${competency.selectedAbilities.length !== 1 ? 'es' : ''}`}
+                                                    size="small"
+                                                    variant="outlined"
+                                                    sx={{
+                                                        borderColor: color,
+                                                        color: color,
+                                                        fontWeight: 500
+                                                    }}
+                                                />
+                                            </Box>
+                                            <Box>
+                                                <Typography variant="caption" color="text.secondary" fontWeight={500} mb={0.5} display="block">
+                                                    Capacidades seleccionadas:
+                                                </Typography>
+                                                <Box component="ul" sx={{ pl: 2, m: 0 }}>
+                                                    {competency.selectedAbilities.map((ability: string, i: number) => (
                                                         <Typography
                                                             key={i}
                                                             component="li"
