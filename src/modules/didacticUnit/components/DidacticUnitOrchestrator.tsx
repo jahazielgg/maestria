@@ -61,7 +61,10 @@ export default function DidacticUnitOrchestrator() {
       case 1:
         return selectedCurricularAreas.length === 0
       case 2:
-        return selectedCompetencies.length === 0 || selectedCompetencies.some(c => c.selectedAbilities.length === 0)
+        // Debe tener al menos una competencia regular O una transversal seleccionada
+        const hasRegularCompetencies = selectedCompetencies.length > 0 && selectedCompetencies.every(c => c.selectedAbilities.length > 0)
+        const hasTransversalCompetencies = selectedTransversalCompetencies.length > 0 && selectedTransversalCompetencies.every(c => c.selectedAbilities.length > 0)
+        return !hasRegularCompetencies && !hasTransversalCompetencies
       case 3:
         return false // Transversales opcional
       case 4:
@@ -140,7 +143,7 @@ export default function DidacticUnitOrchestrator() {
   const { Component } = steps[activeStep]
 
   return (
-    <Box sx={{ width: '100%', maxWidth: 900, mx: 'auto', py: 4 }}>
+    <Box className="w-full px-6 py-4">
       <Stepper activeStep={activeStep} alternativeLabel>
         {steps.map(({ label }) => (
           <Step key={label}>
