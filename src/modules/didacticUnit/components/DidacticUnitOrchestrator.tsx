@@ -7,7 +7,9 @@ import {
   StepLabel,
   CircularProgress,
   Snackbar,
-  Alert
+  Alert,
+  Typography,
+  Paper
 } from '@mui/material'
 import { useDidacticUnitStore } from '../../../store/useDidacticUnitStore'
 import Step1LevelCycleGrade from '../steps/Step1LevelCycleGrade'
@@ -16,7 +18,11 @@ import Step3Competencies from '../steps/Step3Competencies'
 import Step4TransversalApproaches from '../steps/Step4TransversalApproach'
 import Step5SignificantSituation from '../steps/Step5SignificantSituation'
 import Step6DidacticUnitDetails from '../steps/Step6DidacticUnitDetails'
-
+import { exportToPDFAdvanced, exportToWordAdvanced } from './Exportations'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import rehypeRaw from 'rehype-raw'
+import { markdownComponents } from './MarkdownViewer'
 
 const steps = [
   { label: 'Nivel, Ciclo y Grado', Component: Step1LevelCycleGrade },
@@ -27,11 +33,13 @@ const steps = [
   { label: 'Detalles de la Unidad', Component: Step6DidacticUnitDetails },
 ]
 
+
 export default function DidacticUnitOrchestrator() {
   const [activeStep, setActiveStep] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [submitSuccess, setSubmitSuccess] = useState(false)
+  const [generatedText, setGeneratedText] = useState<string | null>(null);
 
   const store = useDidacticUnitStore()
   const {
@@ -41,6 +49,7 @@ export default function DidacticUnitOrchestrator() {
     selectedCurricularAreas,
     selectedCompetencies,
     selectedTransversalApproaches,
+    selectedTransversalCompetencies,
     significantSituation,
     didacticUnitDetails
   } = store
@@ -65,8 +74,10 @@ export default function DidacticUnitOrchestrator() {
   }
 
   const handleSubmit = async () => {
-    setIsSubmitting(true)
-    setSubmitError(null)
+    setIsSubmitting(true);
+    setSubmitError(null);
+    setSubmitSuccess(false);
+
     const payload = {
       educationLevel,
       cycle,
@@ -74,31 +85,35 @@ export default function DidacticUnitOrchestrator() {
       selectedCurricularAreas,
       selectedCompetencies,
       selectedTransversalApproaches,
+      selectedTransversalCompetencies,
       significantSituation,
       didacticUnitDetails
-    }
+    };
 
     try {
-      const response = await fetch('/api/didactic-units', {
+      const response = await fetch('http://localhost:8080/api/v1/didactic-units', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)
-      })
+      });
 
       if (!response.ok) {
-        const text = await response.text()
-        throw new Error(text || 'Error al generar la unidad didáctica')
+        const text = await response.text();
+        throw new Error(text || 'Error al generar la unidad didáctica');
       }
 
-      setSubmitSuccess(true)
+      const resultText = await response.text(); // Aquí obtienes el contenido generado
+      setGeneratedText(resultText);
+      setSubmitSuccess(true);
     } catch (error: any) {
-      setSubmitError(error.message)
+      setSubmitError(error.message);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
+
 
   const handleNext = () => {
     if (activeStep < steps.length - 1) {
@@ -110,6 +125,16 @@ export default function DidacticUnitOrchestrator() {
 
   const handleBack = () => {
     setActiveStep((prev) => Math.max(prev - 1, 0))
+  }
+
+  const handleDownloadPDF = () => {
+    if (!generatedText) return
+    exportToPDFAdvanced(generatedText)
+  }
+
+  const handleDownloadWord = async () => {
+    if (!generatedText) return
+    await exportToWordAdvanced(generatedText)
   }
 
   const { Component } = steps[activeStep]
@@ -177,6 +202,42 @@ export default function DidacticUnitOrchestrator() {
           {submitError}
         </Alert>
       </Snackbar>
+
+      {generatedText && (
+        <Box sx={{ mt: 8 }}>
+          <Alert severity="info" sx={{ mb: 2 }}>
+            La unidad fue generada con éxito. Puedes revisarla y descargarla.
+          </Alert>
+
+          <Paper
+            elevation={2}
+            sx={{
+              p: 4,
+              mb: 3,
+              maxHeight: '70vh',
+              overflow: 'auto',
+              bgcolor: '#fafafa'
+            }}
+          >
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              rehypePlugins={[rehypeRaw]}
+              components={markdownComponents}
+            >
+              {generatedText}
+            </ReactMarkdown>
+          </Paper>
+
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button variant="outlined" onClick={handleDownloadPDF}>
+              Descargar como PDF
+            </Button>
+            <Button variant="outlined" onClick={handleDownloadWord}>
+              Descargar como Word
+            </Button>
+          </Box>
+        </Box>
+      )}
     </Box>
   )
 }
