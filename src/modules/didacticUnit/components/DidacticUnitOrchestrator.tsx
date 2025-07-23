@@ -61,10 +61,7 @@ export default function DidacticUnitOrchestrator() {
       case 1:
         return selectedCurricularAreas.length === 0
       case 2:
-        // Debe tener al menos una competencia regular O una transversal seleccionada
-        const hasRegularCompetencies = selectedCompetencies.length > 0 && selectedCompetencies.every(c => c.selectedAbilities.length > 0)
-        const hasTransversalCompetencies = selectedTransversalCompetencies.length > 0 && selectedTransversalCompetencies.every(c => c.selectedAbilities.length > 0)
-        return !hasRegularCompetencies && !hasTransversalCompetencies
+        return selectedCompetencies.length === 0 || selectedCompetencies.some(c => c.selectedAbilities.length === 0)
       case 3:
         return false // Transversales opcional
       case 4:

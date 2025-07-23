@@ -5,9 +5,9 @@ import { Box } from "@mui/material";
 
 function AppRouter() {
     return (
-        <Box className="flex w-full min-h-screen">
+        <Box className="flex w-full h-screen overflow-hidden">
             <Sidebar />
-            <Box component="main" className="flex-1 overflow-y-auto">
+            <Box component="main" className="flex-1 h-screen overflow-y-auto">
                 <Routes>
                     <Route path="/" element={<DidacticUnitCreationPage />} />
                 </Routes>
