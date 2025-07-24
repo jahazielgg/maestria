@@ -1,69 +1,55 @@
-# React + TypeScript + Vite
+# Maestria – Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Maestria** es una plataforma web impulsada por inteligencia artificial que ayuda a docentes peruanos a generar unidades didácticas y sesiones de aprendizaje alineadas al Currículo Nacional del MINEDU.
 
-Currently, two official plugins are available:
+Este repositorio contiene el **frontend** de la aplicación, desarrollado con **React**, **Vite**, **Tailwind CSS** y **Material UI**.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## Tecnologías principales
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **React** – Biblioteca principal para la construcción de interfaces.
+- **Vite** – Bundler ultrarrápido para desarrollo y producción.
+- **Tailwind CSS** – Utilidades de diseño para una interfaz moderna y responsiva.
+- **Material UI (MUI)** – Componentes accesibles y listos para producción.
+- **Zustand** – Manejo de estado simple y predecible.
+- **React Router** – Sistema de enrutamiento cliente para SPA.
+- **Markdown + LLM** – Generación dinámica de contenido desde el backend (ver backend repo).
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+## Instalación
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# Clonar el repositorio
+git clone https://github.com/tu-usuario/maestria-frontend.git
+
+# Ingresar al proyecto
+cd maestria-frontend
+
+# Instalar dependencias
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Comandos útiles
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+# Iniciar servidor de desarrollo
+npm run dev
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Compilar para producción
+npm run build
+
+# Previsualizar build
+npm run preview
 ```
+
+## Funcionalidades actuales
+
+- Asistente guiado paso a paso para crear unidades didácticas.
+- Selección de competencias según grado y nivel educativo.
+- Generación de sesiones de aprendizaje con IA.
+- Exportación de unidades en formato Word o PDF.
+- Interfaz responsive y accesible para docentes.
+
+
