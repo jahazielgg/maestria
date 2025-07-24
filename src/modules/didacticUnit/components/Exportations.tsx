@@ -10,9 +10,9 @@ export const exportToPDFAdvanced = async (markdownText: string) => {
     breaks: false,
     pedantic: false,
   })
-  
+
   const html = marked.parse(markdownText)
-  
+
   const styledHtml = `
     <html>
       <head>
@@ -36,26 +36,26 @@ export const exportToPDFAdvanced = async (markdownText: string) => {
       <body>${html}</body>
     </html>
   `
-  
+
   const element = document.createElement('div')
   element.innerHTML = styledHtml
-  
+
   return html2pdf()
     .from(element)
     .set({
       filename: 'unidad-didactica.pdf',
       margin: [20, 20, 20, 20],
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { 
-        scale: 2, 
+      html2canvas: {
+        scale: 2,
         useCORS: true,
         letterRendering: true,
         allowTaint: false
       },
-      jsPDF: { 
-        unit: 'mm', 
-        format: 'a4', 
-        orientation: 'portrait',
+      jsPDF: {
+        unit: 'mm',
+        format: 'a4',
+        orientation: 'landscape',
         compress: true
       }
     })
@@ -71,42 +71,46 @@ export const exportToWordAdvanced = (markdownText: string) => {
       breaks: false,
       pedantic: false,
     })
-    
+
     const html = marked.parse(markdownText)
-    
-    // Crear un HTML más compatible con Word
-    const wordHtml = `
-      <html xmlns:o="urn:schemas-microsoft-com:office:office" 
-            xmlns:w="urn:schemas-microsoft-com:office:word" 
-            xmlns="http://www.w3.org/TR/REC-html40">
-        <head>
-          <meta charset="utf-8">
-          <meta name="ProgId" content="Word.Document">
-          <meta name="Generator" content="Microsoft Word">
-          <meta name="Originator" content="Microsoft Word">
-          <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; margin: 40px; }
-            h1 { color: #1976d2; font-size: 24px; margin-bottom: 16px; }
-            h2 { color: #1976d2; font-size: 20px; margin-bottom: 12px; }
-            h3 { color: #1976d2; font-size: 16px; margin-bottom: 8px; }
-            table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-            th { background-color: #f5f5f5; padding: 8px; border: 1px solid #000; font-weight: bold; }
-            td { padding: 8px; border: 1px solid #000; }
-            p { margin: 12px 0; }
-            ul, ol { margin: 16px 0; padding-left: 24px; }
-            li { margin: 4px 0; }
-          </style>
-        </head>
-        <body>${html}</body>
-      </html>
-    `
-    
-    const blob = new Blob([wordHtml], { 
-      type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
+
+const wordHtml = `
+  <html xmlns:o="urn:schemas-microsoft-com:office:office" 
+        xmlns:w="urn:schemas-microsoft-com:office:word" 
+        xmlns="http://www.w3.org/TR/REC-html40">
+    <head>
+      <meta charset="utf-8">
+      <meta name="ProgId" content="Word.Document">
+      <meta name="Generator" content="Microsoft Word">
+      <meta name="Originator" content="Microsoft Word">
+      <style>
+        @page {
+          size: 29.7cm 21cm; /* A4 horizontal */
+          margin: 2cm;
+        }
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; }
+        h1 { color: #1976d2; font-size: 24px; margin-bottom: 16px; }
+        h2 { color: #1976d2; font-size: 20px; margin-bottom: 12px; }
+        h3 { color: #1976d2; font-size: 16px; margin-bottom: 8px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th { background-color: #f5f5f5; padding: 8px; border: 1px solid #000; font-weight: bold; }
+        td { padding: 8px; border: 1px solid #000; }
+        p { margin: 12px 0; }
+        ul, ol { margin: 16px 0; padding-left: 24px; }
+        li { margin: 4px 0; }
+      </style>
+    </head>
+    <body>${html}</body>
+  </html>
+`
+
+
+    const blob = new Blob([wordHtml], {
+      type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     })
-    
+
     saveAs(blob, 'unidad-didactica.doc')
-    
+
   } catch (error) {
     console.error('Error al exportar a Word:', error)
     throw new Error('Error al generar el archivo Word')
