@@ -36,7 +36,7 @@ export default function Sidebar() {
                             className="h-15 w-auto"
                         />
                         <h1 className="text-xl font-semibold text-gray-800" style={{fontFamily: 'Teachers, sans-serif'}}>
-                            Maestría
+                            Maestria
                         </h1>
                     </div>
                     
